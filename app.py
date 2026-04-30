@@ -120,11 +120,30 @@ except Exception as e:
     st.error(f"❌ ファイル読み込みエラー: {e}")
     st.stop()
 
-# 時間正規化
-df_raw["Time_clean"], df_raw["Is_provisional"] = zip(
-    *df_raw["Time"].map(normalize_time)
-)
+# 時間正規化 (3-tuple)
+parsed = df_raw["Time"].map(normalize_time)
+df_raw["Time_clean"] = [p[0] for p in parsed]
+df_raw["Is_provisional"] = [p[1] for p in parsed]
+df_raw["Is_monthly"] = [p[2] for p in parsed]
 df_raw["Time"] = df_raw["Time_clean"]
+
+# 粒度判定 (monthly / yearly / mixed)
+monthly_count = df_raw["Is_monthly"].sum()
+total_count = len(df_raw)
+if monthly_count == total_count:
+    detected_granularity = "monthly"
+    granularity_label = "月別"
+elif monthly_count == 0:
+    detected_granularity = "yearly"
+    granularity_label = "年度別"
+else:
+    st.error(
+        f"❌ **時間値の形式が混在しています。**\n\n"
+        f"月別形式: {monthly_count} 件、非月別形式: {total_count - monthly_count} 件。\n\n"
+        "本ツールは月別または年度別のいずれか単一形式のみに対応しています。"
+        "財政部関税統計サイトでダウンロードする際、いずれか一方を選択してください。"
+    )
+    st.stop()
 
 # ========== プレビュー ==========
 
@@ -137,11 +156,22 @@ with col1:
     st.metric("レコード数", f"{n_records:,}")
 
 with col2:
-    months = sorted(
-        df_raw["Time"].unique(),
-        key=lambda x: tuple(int(p) for p in str(x).split("/")),
-    )
-    st.metric("月数", f"{len(months)} ヶ月")
+    # 粒度に応じた並べ替え
+    import re as _re_local
+    def _sk(s):
+        s = str(s)
+        m = _re_local.fullmatch(r"(\d{4})/(\d{1,2})", s)
+        if m: return (int(m.group(1)), int(m.group(2)), 0)
+        m = _re_local.fullmatch(r"(\d{4})/(\d{1,2})~\d{4}/\d{1,2}", s)
+        if m: return (int(m.group(1)), int(m.group(2)), 1)
+        m = _re_local.fullmatch(r"(\d{4})", s)
+        if m: return (int(m.group(1)), 0, 2)
+        return (9999, 99, 9)
+    months = sorted(df_raw["Time"].unique(), key=_sk)
+    if detected_granularity == "yearly":
+        st.metric("期間数", f"{len(months)} 年")
+    else:
+        st.metric("月数", f"{len(months)} ヶ月")
 
 with col3:
     n_countries = df_raw["Country"].nunique()
@@ -150,6 +180,13 @@ with col3:
 with col4:
     types = df_raw["Imports/Exports"].unique()
     st.metric("区分", " / ".join(types))
+
+# 粒度の通知
+if detected_granularity == "yearly":
+    st.info(
+        f"📅 **年度別データを検出しました** — 各表の時間軸は「年」単位で集計されます "
+        f"(月別ピボット・前月比は表示されません)。"
+    )
 
 # ========== 設定セクション ==========
 
