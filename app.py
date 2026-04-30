@@ -383,4 +383,27 @@ if "last_result" in st.session_state:
                     r = t3_header_row + 1 + i
                     ranking_data.append({
                         "順位": ws.cell(row=r, column=2).value,
-                 
+                        "国名": ws.cell(row=r, column=3).value,
+                        "総額(USD$1k)": ws.cell(row=r, column=4).value,
+                        "総重量(TNE)": ws.cell(row=r, column=5).value,
+                        "金額構成比": ws.cell(row=r, column=6).value,
+                        "累計構成比": ws.cell(row=r, column=7).value,
+                        "平均単価(USD/TNE)": ws.cell(row=r, column=8).value,
+                        "備考": ws.cell(row=r, column=9).value or "",
+                    })
+
+                df_ranking = pd.DataFrame(ranking_data)
+                st.markdown(f"**{trade_label} 表3: ランキング**")
+                st.dataframe(
+                    df_ranking.style.format({
+                        "総額(USD$1k)": "{:,.0f}",
+                        "総重量(TNE)": "{:,.0f}",
+                        "金額構成比": "{:.1%}",
+                        "累計構成比": "{:.1%}",
+                        "平均単価(USD/TNE)": "{:.1f}",
+                    }),
+                    hide_index=True,
+                    use_container_width=True,
+                )
+    except Exception as e:
+        st.caption(f"プレビュー生成失敗: {e}")
