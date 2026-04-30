@@ -1,0 +1,31 @@
+{
+  "_comment": "品目別の設定。HS code (CCC code) をキーに、日文品名と妥当な単価レンジ (USD/TNE) を定義。未登録の品目は実行時に英文名 + デフォルトレンジで処理されます。",
+  "_last_updated": "2026-04-29",
+
+  "commodities": {
+    "27101964009": {
+      "jp_name": "ナフサ",
+      "price_min": 400,
+      "price_max": 800,
+      "note": "原油由来の軽質留分。市況: ブレント原油との連動性高い"
+    },
+    "_example_2": {
+      "jp_name": "テダ L33",
+      "price_min": 2500,
+      "price_max": 4500,
+      "note": "TEDA. ポリウレタンアミン触媒。市況にあわせて要更新"
+    },
+    "_example_3": {
+      "jp_name": "TOYOCAT DT",
+      "price_min": 3000,
+      "price_max": 5500,
+      "note": "東ソー製アミン触媒"
+    }
+  },
+
+  "default": {
+    "price_min": 0,
+    "price_max": 999999,
+    "note": "未登録品目。妥当レンジ未設定のため『単価要確認』マーカーは表示されません。"
+  }
+}
