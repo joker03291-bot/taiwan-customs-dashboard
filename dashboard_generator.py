@@ -630,7 +630,7 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
 # ============ メインAPI ============
 
 def generate_dashboard(input_path: str, output_path: str,
-                       trade_type: Optional[str] = None,
+                       trade_type=None,
                        update_country_mapping_file: bool = False) -> dict:
     """
     関税統計の原始ファイルからダッシュボードを生成。
@@ -638,7 +638,8 @@ def generate_dashboard(input_path: str, output_path: str,
     Args:
         input_path: 関税統計の .xls ファイルパス
         output_path: 出力 .xlsx ファイルパス
-        trade_type: "Imports" or "Exports". None で自動判定 (Imports 優先)
+        trade_type: None (自動判定) | "Imports" | "Exports" |
+                    ["Imports", "Exports"] (両方を別シートに出力)
         update_country_mapping_file: 新規国家を JSON 対照に永続化するか
 
     Returns:
@@ -685,73 +686,118 @@ def generate_dashboard(input_path: str, output_path: str,
 
     provisional_months = set(df_raw[df_raw["Is_provisional"]]["Time"].unique())
 
-    # 区分フィルタ
-    df, actual_trade = filter_trade_type(df_raw, trade_type)
-    if len(df) == 0:
-        raise ValueError(f"trade_type='{trade_type}' に該当するデータがありません。")
+    # 区分の解決: trade_type を list[str] に正規化
+    available = list(df_raw["Imports/Exports"].unique())
+    if trade_type is None:
+        # 自動判定: 利用可能なものすべてを使う
+        trade_types = [t for t in ["Imports", "Exports"] if t in available]
+        if not trade_types:
+            trade_types = available[:1]
+    elif isinstance(trade_type, str):
+        trade_types = [trade_type]
+    else:
+        trade_types = list(trade_type)
 
-    # 品目情報
-    commodity_info = detect_commodity_info(df)
+    # データに存在しない区分を除去
+    trade_types = [t for t in trade_types if t in available]
+    if not trade_types:
+        raise ValueError(
+            f"指定された区分 {trade_type} は原始データに存在しません。"
+            f"利用可能: {available}"
+        )
+
+    # 各区分の DataFrame をまとめる (総表は両方を含む)
+    df_by_trade = {t: df_raw[df_raw["Imports/Exports"] == t].copy() for t in trade_types}
+    df_combined = pd.concat(df_by_trade.values(), ignore_index=True)
+
+    # 品目情報 (両区分の品目を統合)
+    commodity_info = detect_commodity_info(df_combined)
     commodity_settings = load_commodity_settings(commodity_info["primary_code"])
 
-    # 期間リスト (粒度に応じて並び替え)
+    # 期間リスト (粒度に応じて並び替え) — 両区分を統合
     def _period_sort_key(s):
         """月別/年度の両形式に対応した並べ替えキー。"""
         s = str(s)
-        # YYYY/M
         m = re.fullmatch(r"(\d{4})/(\d{1,2})", s)
         if m:
             return (int(m.group(1)), int(m.group(2)), 0)
-        # YYYY/M~YYYY/M (区間) → 開始月で並べる
         m = re.fullmatch(r"(\d{4})/(\d{1,2})~\d{4}/\d{1,2}", s)
         if m:
             return (int(m.group(1)), int(m.group(2)), 1)
-        # YYYY (年のみ)
         m = re.fullmatch(r"(\d{4})", s)
         if m:
             return (int(m.group(1)), 0, 2)
-        # その他 — 末尾に
         return (9999, 99, 9)
 
-    months = sorted(df["Time"].unique(), key=_period_sort_key)
-
-    # 国名対照
+    # 国名対照 — 両区分の国家を統合
     mapping = load_country_mapping()
-    mapping, new_countries = reconcile_countries(df, mapping)
-    used_countries = list(df["Country"].dropna().unique())
+    mapping, new_countries = reconcile_countries(df_combined, mapping)
+    used_countries_all = list(df_combined["Country"].dropna().unique())
 
     # --- ワークブック構築 ---
     wb = Workbook()
     wb.remove(wb.active)
-    _build_raw_sheet(wb, df, mapping)
-    _build_mapping_sheet(wb, mapping, used_countries, new_countries)
-    _build_dashboard_sheet(wb, used_countries, mapping, months,
-                           provisional_months, actual_trade, commodity_info,
-                           commodity_settings, granularity)
 
-    trade_label = "輸入" if actual_trade == "Imports" else "輸出"
-    wb.move_sheet(f"{trade_label}分析ダッシュボード", offset=-2)
+    # 総表: 両区分すべて
+    _build_raw_sheet(wb, df_combined, mapping)
+    _build_mapping_sheet(wb, mapping, used_countries_all, new_countries)
+
+    # ダッシュボードを区分ごとに構築
+    per_trade_summaries = []
+    for t in trade_types:
+        df_t = df_by_trade[t]
+        months_t = sorted(df_t["Time"].unique(), key=_period_sort_key)
+        used_t = list(df_t["Country"].dropna().unique())
+        _build_dashboard_sheet(wb, used_t, mapping, months_t,
+                               provisional_months, t, commodity_info,
+                               commodity_settings, granularity)
+        per_trade_summaries.append({
+            "trade_type": t,
+            "n_periods": len(months_t),
+            "n_countries": len(used_t),
+            "n_records": len(df_t),
+        })
+
+    # シート順序: ダッシュボード → 総表 → 国名対照
+    # 後ろから前に move するため, 逆順で処理
+    for t in reversed(trade_types):
+        trade_label = "輸入" if t == "Imports" else "輸出"
+        wb.move_sheet(f"{trade_label}分析ダッシュボード", offset=-len(wb.sheetnames) + 1)
+
     wb.save(output_path)
 
     if update_country_mapping_file and new_countries:
         save_country_mapping(mapping)
 
+    # サマリー文字列の組立
+    summary_parts = []
+    for s in per_trade_summaries:
+        label = "輸入" if s["trade_type"] == "Imports" else "輸出"
+        summary_parts.append(
+            f"{label} {s['n_periods']}{'年' if granularity == 'yearly' else 'ヶ月'}×{s['n_countries']}カ国 ({s['n_records']}件)"
+        )
+    summary = (f"{commodity_settings.get('jp_name') or commodity_info['primary_desc']} "
+               f"({commodity_info['primary_code']}) | " + " / ".join(summary_parts))
+
+    # 統合期間 (表示用)
+    months_all = sorted(df_combined["Time"].unique(), key=_period_sort_key)
+
     return {
         "status": "success",
         "output_path": output_path,
-        "trade_type": actual_trade,
+        "trade_types": trade_types,
+        "trade_type": trade_types[0] if len(trade_types) == 1 else "Both",
+        "per_trade_summaries": per_trade_summaries,
         "commodity_code": commodity_info["primary_code"],
         "commodity_jp": commodity_settings.get("jp_name") or commodity_info["primary_desc"],
-        "period": f"{months[0]} 〜 {months[-1]}",
-        "n_months": len(months),
-        "n_countries": len(used_countries),
-        "n_records": len(df),
+        "period": f"{months_all[0]} 〜 {months_all[-1]}",
+        "n_months": len(months_all),
+        "n_countries": len(used_countries_all),
+        "n_records": len(df_combined),
         "provisional_months": sorted(provisional_months),
         "new_countries": new_countries,
         "is_multi_commodity": commodity_info["is_multi"],
         "granularity": granularity,
         "removed_dummy_rows": removed_dummy_rows,
-        "summary": (f"{trade_label} | {commodity_settings.get('jp_name') or commodity_info['primary_desc']} "
-                    f"({commodity_info['primary_code']}) | {len(months)}{'年' if granularity == 'yearly' else 'ヶ月'} × {len(used_countries)}カ国 "
-                    f"= {len(df)}件"),
+        "summary": summary,
     }
