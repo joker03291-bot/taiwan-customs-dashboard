@@ -197,22 +197,44 @@ col_a, col_b = st.columns(2)
 
 with col_a:
     available_types = list(df_raw["Imports/Exports"].unique())
-    if len(available_types) > 1:
-        trade_type = st.radio(
-            "輸出入区分",
-            options=available_types,
-            horizontal=True,
-            help="原始データに両方含まれている場合、どちらを処理するか選択",
+    has_imports = "Imports" in available_types
+    has_exports = "Exports" in available_types
+
+    st.markdown("**輸出入区分** *(複数選択可)*")
+    cb_col1, cb_col2 = st.columns(2)
+    with cb_col1:
+        sel_imports = st.checkbox(
+            "Imports (輸入)",
+            value=has_imports,
+            disabled=not has_imports,
+            help="原始データに含まれていない場合は選択不可",
         )
-    else:
-        trade_type = available_types[0]
-        st.info(f"輸出入区分: **{trade_type}** (自動)")
+    with cb_col2:
+        sel_exports = st.checkbox(
+            "Exports (輸出)",
+            value=has_exports and not has_imports,  # Imports があれば Imports のみデフォルト
+            disabled=not has_exports,
+        )
+
+    # 既定挙動: 一つもない場合は両方選択 (両方 available なら両方既定で選択)
+    selected_trades = []
+    if sel_imports:
+        selected_trades.append("Imports")
+    if sel_exports:
+        selected_trades.append("Exports")
+
+    if not selected_trades:
+        st.warning("⚠️ 少なくとも1つの区分を選択してください。")
 
 with col_b:
-    df_filtered = df_raw[df_raw["Imports/Exports"] == trade_type]
-    period_str = (
-        f"{df_filtered['Time'].min()} 〜 {df_filtered['Time'].max()}"
-    )
+    if selected_trades:
+        df_filtered = df_raw[df_raw["Imports/Exports"].isin(selected_trades)]
+        period_str = (
+            f"{df_filtered['Time'].min()} 〜 {df_filtered['Time'].max()}"
+        )
+    else:
+        df_filtered = df_raw  # 警告表示のためのフォールバック
+        period_str = ""
     st.text_input("対象期間", value=period_str, disabled=True)
 
 # 品目情報
@@ -264,7 +286,9 @@ if unmapped:
 
 st.divider()
 
-if st.button("🚀 ダッシュボード生成", type="primary", use_container_width=True):
+button_disabled = len(selected_trades) == 0
+if st.button("🚀 ダッシュボード生成", type="primary",
+             use_container_width=True, disabled=button_disabled):
     with st.spinner("生成中..."):
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as out_tmp:
@@ -273,15 +297,18 @@ if st.button("🚀 ダッシュボード生成", type="primary", use_container_w
             result = generate_dashboard(
                 input_path=tmp_path,
                 output_path=output_path,
-                trade_type=trade_type,
+                trade_type=selected_trades,
             )
 
+            # ファイル名を区分に応じて生成
+            trade_part = "_".join(
+                "輸入" if t == "Imports" else "輸出"
+                for t in result["trade_types"]
+            )
             st.session_state["last_result"] = result
             st.session_state["last_output_path"] = output_path
             st.session_state["last_filename"] = (
-                f"{result['commodity_jp']}_"
-                f"{'輸入' if result['trade_type']=='Imports' else '輸出'}"
-                f"_Dashboard.xlsx"
+                f"{result['commodity_jp']}_{trade_part}_Dashboard.xlsx"
             )
             st.success("✅ 生成完了!")
         except Exception as e:
@@ -336,48 +363,24 @@ if "last_result" in st.session_state:
         from openpyxl import load_workbook
         wb_preview = load_workbook(output_path, data_only=True)
 
-        # 表 3 (ランキング) を抽出
-        sheet_name = (
-            "輸入分析ダッシュボード"
-            if result["trade_type"] == "Imports"
-            else "輸出分析ダッシュボード"
-        )
-        ws = wb_preview[sheet_name]
+        # 各区分の表 3 (ランキング) を順に表示
+        for ts in result["per_trade_summaries"]:
+            t = ts["trade_type"]
+            sheet_name = "輸入分析ダッシュボード" if t == "Imports" else "輸出分析ダッシュボード"
+            trade_label = "輸入" if t == "Imports" else "輸出"
+            ws = wb_preview[sheet_name]
 
-        # 表 3 ヘッダ位置を探す
-        t3_header_row = None
-        for r in range(1, ws.max_row + 1):
-            if ws.cell(row=r, column=2).value == "順位":
-                t3_header_row = r
-                break
+            # 表 3 ヘッダ位置を探す
+            t3_header_row = None
+            for r in range(1, ws.max_row + 1):
+                if ws.cell(row=r, column=2).value == "順位":
+                    t3_header_row = r
+                    break
 
-        if t3_header_row:
-            ranking_data = []
-            for i in range(result["n_countries"]):
-                r = t3_header_row + 1 + i
-                ranking_data.append({
-                    "順位": ws.cell(row=r, column=2).value,
-                    "国名": ws.cell(row=r, column=3).value,
-                    "総額(USD$1k)": ws.cell(row=r, column=4).value,
-                    "総重量(TNE)": ws.cell(row=r, column=5).value,
-                    "金額構成比": ws.cell(row=r, column=6).value,
-                    "累計構成比": ws.cell(row=r, column=7).value,
-                    "平均単価(USD/TNE)": ws.cell(row=r, column=8).value,
-                    "備考": ws.cell(row=r, column=9).value or "",
-                })
-
-            df_ranking = pd.DataFrame(ranking_data)
-            st.markdown(f"**表3: ランキング**")
-            st.dataframe(
-                df_ranking.style.format({
-                    "総額(USD$1k)": "{:,.0f}",
-                    "総重量(TNE)": "{:,.0f}",
-                    "金額構成比": "{:.1%}",
-                    "累計構成比": "{:.1%}",
-                    "平均単価(USD/TNE)": "{:.1f}",
-                }),
-                hide_index=True,
-                use_container_width=True,
-            )
-    except Exception as e:
-        st.caption(f"プレビュー生成失敗: {e}")
+            if t3_header_row:
+                ranking_data = []
+                for i in range(ts["n_countries"]):
+                    r = t3_header_row + 1 + i
+                    ranking_data.append({
+                        "順位": ws.cell(row=r, column=2).value,
+                 
