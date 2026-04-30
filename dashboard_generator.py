@@ -108,11 +108,22 @@ def load_commodity_settings(commodity_code: str) -> dict:
 # ============ 原始資料の解析 ============
 
 def normalize_time(t):
-    """ '2026/3(preliminary)' → ('2026/3', True) 形式に正規化。"""
+    """
+    時間文字列を正規化する。
+
+    Returns:
+        (clean: str, is_provisional: bool, is_monthly: bool)
+        - clean: 括弧などを除去した文字列
+        - is_provisional: 速報値かどうか
+        - is_monthly: 月別形式 ('YYYY/M' or 'YYYY/MM') かどうか
+    """
     s = str(t).strip()
     is_prelim = bool(re.search(r"preliminary|暫定|速報", s, re.IGNORECASE))
     clean = re.split(r"[(（]", s)[0].strip()
-    return clean, is_prelim
+    # 月別形式の判定: YYYY/M または YYYY/MM のみを許可
+    # '2024' (年のみ) や '2026/1~2026/3' (範囲) は不可
+    is_monthly = bool(re.fullmatch(r"\d{4}/\d{1,2}", clean))
+    return clean, is_prelim, is_monthly
 
 
 def detect_commodity_info(df: pd.DataFrame) -> dict:
@@ -273,11 +284,25 @@ def _build_mapping_sheet(wb, mapping, used_countries, new_countries):
 
 def _build_dashboard_sheet(wb, used_countries, mapping, months,
                            provisional_months, trade_type, commodity_info,
-                           commodity_settings):
-    """ Sheet 3: 輸入/輸出分析ダッシュボード。 """
+                           commodity_settings, granularity="monthly"):
+    """ ダッシュボードシート。granularity = 'monthly' or 'yearly'。 """
     trade_label = "輸入" if trade_type == "Imports" else "輸出"
     ws = wb.create_sheet(f"{trade_label}分析ダッシュボード")
     ws.sheet_view.showGridLines = False
+
+    # 粒度に応じたラベル
+    if granularity == "yearly":
+        period_label = "年"           # 「月」→「年」
+        period_sum_label = "年計"     # 「月計」→「年計」
+        period_pivot_word = "年度別"  # 「月別」→「年度別」
+        period_unit = "年"            # 「ヶ月」→「年」
+        prev_period_label = "前年比"  # 「前月比」→「前年比」
+    else:
+        period_label = "月"
+        period_sum_label = "月計"
+        period_pivot_word = "月別"
+        period_unit = "ヶ月"
+        prev_period_label = "前月比"
 
     n_countries = len(used_countries)
     n_months = len(months)
@@ -304,10 +329,10 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
                    f"データ期間：{period_desc}　|　単位：金額 USD$1,000、重量 TNE　|　"
                    f"出所：台湾財政部関税統計")).font = FONT_SUBTITLE
 
-    # --- 表 1: 月別 × 供給国 重量 ---
+    # --- 表 1: 期間 × 供給国 重量 ---
     t1_start = 4
     ws.cell(row=t1_start, column=2,
-            value=f"■ 表1：月別×{('供給国' if trade_type=='Imports' else '仕向国')} {trade_label}重量ピボット (TNE)").font = FONT_TOTAL
+            value=f"■ 表1：{period_pivot_word}×{('供給国' if trade_type=='Imports' else '仕向国')} {trade_label}重量ピボット (TNE)").font = FONT_TOTAL
 
     t1_header = t1_start + 1
     label = "供給国" if trade_type == "Imports" else "仕向国"
@@ -356,7 +381,7 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
         _setup_styles_for_cell(c, align=RIGHT, num_fmt="0.0%")
 
     t1_total_row = t1_data_start + n_countries
-    c = ws.cell(row=t1_total_row, column=2, value="月計")
+    c = ws.cell(row=t1_total_row, column=2, value=period_sum_label)
     _setup_styles_for_cell(c, font=FONT_TOTAL, fill=FILL_TOTAL, align=LEFT)
 
     for j, m in enumerate(months):
@@ -381,7 +406,7 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
     # --- 表 2: 月別 × 供給国 金額 (+ ソート鍵) ---
     t2_start = t1_total_row + 2
     ws.cell(row=t2_start, column=2,
-            value=f"■ 表2：月別×{label} {trade_label}金額ピボット (USD$1,000)").font = FONT_TOTAL
+            value=f"■ 表2：{period_pivot_word}×{label} {trade_label}金額ピボット (USD$1,000)").font = FONT_TOTAL
 
     t2_header = t2_start + 1
     c = ws.cell(row=t2_header, column=2, value=label)
@@ -432,7 +457,7 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
         _setup_styles_for_cell(c, align=RIGHT, num_fmt="0.00000")
 
     t2_total_row = t2_data_start + n_countries
-    c = ws.cell(row=t2_total_row, column=2, value="月計")
+    c = ws.cell(row=t2_total_row, column=2, value=period_sum_label)
     _setup_styles_for_cell(c, font=FONT_TOTAL, fill=FILL_TOTAL, align=LEFT)
 
     for j, m in enumerate(months):
@@ -531,14 +556,14 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
                    f'&C{t3_data_start+2}&"）で全体の "&TEXT(G{t3_data_start+2},"0.0%")'
                    f'&" を占める。"')).font = FONT_NOTE
 
-    # --- 表 4: 月別単価推移 ---
+    # --- 表 4: 期間別単価推移 ---
     t4_start = t3_summary_row + 2
     ws.cell(row=t4_start, column=2,
-            value=f"■ 表4：月別平均単価推移 (USD/TNE) と前月比").font = FONT_TOTAL
+            value=f"■ 表4：{period_pivot_word}平均単価推移 (USD/TNE) と{prev_period_label}").font = FONT_TOTAL
 
     t4_header = t4_start + 1
-    headers_t4 = ["月", f"{trade_label}金額(USD$1k)",
-                  f"{trade_label}重量(TNE)", "平均単価(USD/TNE)", "前月比", "備考"]
+    headers_t4 = [period_label, f"{trade_label}金額(USD$1k)",
+                  f"{trade_label}重量(TNE)", "平均単価(USD/TNE)", prev_period_label, "備考"]
     for col_idx, h in enumerate(headers_t4, start=2):
         c = ws.cell(row=t4_header, column=col_idx, value=h)
         _setup_styles_for_cell(c, font=FONT_HEADER, fill=FILL_HEADER, align=CENTER)
@@ -626,11 +651,38 @@ def generate_dashboard(input_path: str, output_path: str,
     df_raw.columns = ["Imports/Exports", "Time", "Commodity Code", "Description",
                       "Country", "Value(USD$1,000)", "Weight(TNE)"]
 
-    # 時間正規化
-    df_raw["Time_clean"], df_raw["Is_provisional"] = zip(
-        *df_raw["Time"].map(normalize_time))
+    # 時間正規化 (3-tuple: clean, is_provisional, is_monthly)
+    parsed = df_raw["Time"].map(normalize_time)
+    df_raw["Time_clean"] = [p[0] for p in parsed]
+    df_raw["Is_provisional"] = [p[1] for p in parsed]
+    df_raw["Is_monthly"] = [p[2] for p in parsed]
     df_raw["Time"] = df_raw["Time_clean"]
     df_raw = df_raw.drop(columns=["Time_clean"])
+
+    # 粒度を判定 (monthly / yearly / mixed)
+    monthly_count = df_raw["Is_monthly"].sum()
+    total_count = len(df_raw)
+    if monthly_count == total_count:
+        granularity = "monthly"
+    elif monthly_count == 0:
+        granularity = "yearly"
+    else:
+        # 混合 — 通常起こらないが防御的に
+        raise ValueError(
+            f"原始ファイルに月別と非月別の時間値が混在しています。"
+            f"月別: {monthly_count}件、非月別: {total_count - monthly_count}件。"
+            f"財政部関税統計でダウンロードする際、月別または年別のいずれか一方を選択してください。"
+        )
+
+    # 「合計」「Total」などのダミー国家行を除去 (年度資料に多い)
+    dummy_country_patterns = re.compile(
+        r"^(total|grand[\s_-]*total|合計|総計|小計|計|all\s*countries?)$",
+        re.IGNORECASE,
+    )
+    before = len(df_raw)
+    df_raw = df_raw[~df_raw["Country"].astype(str).str.strip().str.match(dummy_country_patterns, na=False)].copy()
+    removed_dummy_rows = before - len(df_raw)
+
     provisional_months = set(df_raw[df_raw["Is_provisional"]]["Time"].unique())
 
     # 区分フィルタ
@@ -642,9 +694,26 @@ def generate_dashboard(input_path: str, output_path: str,
     commodity_info = detect_commodity_info(df)
     commodity_settings = load_commodity_settings(commodity_info["primary_code"])
 
-    # 月份リスト
-    months = sorted(df["Time"].unique(),
-                    key=lambda x: tuple(int(p) for p in str(x).split("/")))
+    # 期間リスト (粒度に応じて並び替え)
+    def _period_sort_key(s):
+        """月別/年度の両形式に対応した並べ替えキー。"""
+        s = str(s)
+        # YYYY/M
+        m = re.fullmatch(r"(\d{4})/(\d{1,2})", s)
+        if m:
+            return (int(m.group(1)), int(m.group(2)), 0)
+        # YYYY/M~YYYY/M (区間) → 開始月で並べる
+        m = re.fullmatch(r"(\d{4})/(\d{1,2})~\d{4}/\d{1,2}", s)
+        if m:
+            return (int(m.group(1)), int(m.group(2)), 1)
+        # YYYY (年のみ)
+        m = re.fullmatch(r"(\d{4})", s)
+        if m:
+            return (int(m.group(1)), 0, 2)
+        # その他 — 末尾に
+        return (9999, 99, 9)
+
+    months = sorted(df["Time"].unique(), key=_period_sort_key)
 
     # 国名対照
     mapping = load_country_mapping()
@@ -658,7 +727,7 @@ def generate_dashboard(input_path: str, output_path: str,
     _build_mapping_sheet(wb, mapping, used_countries, new_countries)
     _build_dashboard_sheet(wb, used_countries, mapping, months,
                            provisional_months, actual_trade, commodity_info,
-                           commodity_settings)
+                           commodity_settings, granularity)
 
     trade_label = "輸入" if actual_trade == "Imports" else "輸出"
     wb.move_sheet(f"{trade_label}分析ダッシュボード", offset=-2)
@@ -680,7 +749,9 @@ def generate_dashboard(input_path: str, output_path: str,
         "provisional_months": sorted(provisional_months),
         "new_countries": new_countries,
         "is_multi_commodity": commodity_info["is_multi"],
+        "granularity": granularity,
+        "removed_dummy_rows": removed_dummy_rows,
         "summary": (f"{trade_label} | {commodity_settings.get('jp_name') or commodity_info['primary_desc']} "
-                    f"({commodity_info['primary_code']}) | {len(months)}ヶ月 × {len(used_countries)}カ国 "
+                    f"({commodity_info['primary_code']}) | {len(months)}{'年' if granularity == 'yearly' else 'ヶ月'} × {len(used_countries)}カ国 "
                     f"= {len(df)}件"),
     }
