@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-
 from dashboard_generator import (
     generate_dashboard,
     load_country_mapping,
