@@ -5,38 +5,19 @@ HS code ごとに、日文品名・単価妥当レンジ・備考を編集でき
 """
 
 import json
-import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from _theme import inject_theme, hero, footer
-
 DATA_DIR = Path(__file__).parent.parent / "data"
 COMMODITY_FILE = DATA_DIR / "commodity_settings.json"
 
-st.set_page_config(
-    page_title="品目設定",
-    page_icon="🧪",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-)
+st.set_page_config(page_title="品目設定", page_icon="🧪", layout="wide")
+st.title("🧪 品目設定")
+st.caption("HS code ごとに日文品名と単価妥当レンジを管理します。")
 
-inject_theme()
-
-hero(
-    eyebrow="MASTER DATA",
-    title="品目設定",
-    desc=(
-        "HS code ごとに、日文品名と単価妥当レンジを管理します。"
-        "ここで設定した単価レンジは、表3「備考」欄の異常値検出に使用されます。"
-    ),
-)
-
-# ========== 読み込み ==========
-
+# 読み込み
 with open(COMMODITY_FILE, encoding="utf-8") as f:
     data = json.load(f)
 
@@ -46,6 +27,7 @@ real_commodities = {
     if not k.startswith("_")
 }
 
+# DataFrame 化
 rows = []
 for code, info in real_commodities.items():
     rows.append({
@@ -60,36 +42,11 @@ df = pd.DataFrame(rows) if rows else pd.DataFrame(
     columns=["HS code", "日文品名", "単価下限 (USD/TNE)", "単価上限 (USD/TNE)", "備考"]
 )
 
-# ========== サマリー ==========
+st.markdown(f"**登録品目数**: {len(df)} 件　|　**最終更新**: {data.get('_last_updated', '-')}")
 
-st.markdown(
-    f"""
-    <div class="section-card">
-      <div class="section-label">CURRENT STATUS</div>
-      <div style="display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 0.4rem;">
-        <div>
-          <div style="color:#64748b; font-size:0.78rem;">登録品目数</div>
-          <div style="color:#1a202c; font-size:1.05rem; font-weight:600;">{len(df)} 件</div>
-        </div>
-        <div>
-          <div style="color:#64748b; font-size:0.78rem;">最終更新</div>
-          <div style="color:#1a202c; font-size:1.05rem; font-weight:600;">
-            {data.get('_last_updated', '-')}
-          </div>
-        </div>
-      </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ========== 編集テーブル ==========
-
-st.markdown("### 品目編集")
-st.caption(
-    "HS code は財政部の商品分類コード（CCC code）です。"
-    "最終行の下のスペースに新規追加できます。"
-)
+# 編集可能なテーブル
+st.markdown("### ✏️ 品目編集")
+st.caption("HS code は財政部の商品分類コード (CCC code)。下の行に新規追加できます。")
 
 edited = st.data_editor(
     df,
@@ -114,27 +71,16 @@ edited = st.data_editor(
     },
 )
 
-# ========== アクションボタン ==========
-
-col1, col2, col3 = st.columns([1.2, 1.2, 4])
+col1, col2, col3 = st.columns([1, 1, 4])
 
 with col1:
-    if st.button("変更を保存", type="primary", use_container_width=True):
+    if st.button("💾 保存", type="primary"):
         if edited["HS code"].duplicated().any():
-            st.error(
-                "HS code に重複があります。\n\n"
-                "重複している行を確認し、修正または削除してから再度保存してください。"
-            )
+            st.error("HS code に重複があります")
         elif edited["HS code"].isna().any() or edited["日文品名"].isna().any():
-            st.error(
-                "必須項目が未入力です。\n\n"
-                "「HS code」と「日文品名」はすべての行で入力が必要です。"
-            )
+            st.error("HS code と日文品名は必須です")
         elif (edited["単価下限 (USD/TNE)"] >= edited["単価上限 (USD/TNE)"]).any():
-            st.error(
-                "単価レンジが正しくありません。\n\n"
-                "「単価下限」は「単価上限」より小さい値にしてください。"
-            )
+            st.error("単価下限は上限より小さい値にしてください")
         else:
             new_commodities = {}
             for _, row in edited.iterrows():
@@ -153,55 +99,43 @@ with col1:
             }
             with open(COMMODITY_FILE, "w", encoding="utf-8") as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=2)
-            st.success("保存しました。")
+            st.success("✅ 保存しました")
             st.rerun()
 
 with col2:
     st.download_button(
-        "JSONバックアップ",
+        "📥 JSONダウンロード",
         data=json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8"),
         file_name="commodity_settings.json",
         mime="application/json",
-        use_container_width=True,
     )
-
-# ========== ヒント ==========
 
 st.divider()
 
-with st.expander("項目の説明", expanded=False):
-    st.markdown(
-        """
-        **HS code（CCC）**
-        　財政部の商品分類コード。原始データの「Commodity Code」欄の値と一致させてください。
+st.markdown("### 📌 使い方のヒント")
+st.markdown(
+    """
+    - **HS code (CCC)**: 財政部の商品分類コード。原始データの「Commodity Code」欄の値と一致させてください
+    - **日文品名**: ダッシュボードのタイトルに表示される名称
+    - **単価妥当レンジ**: 平均単価がこのレンジを外れると、表3の「備考」欄に「※単価要確認」と
+      自動的に表示されます。市況急変・データ異常の早期発見用
+    - **未登録品目**: ここに登録されていない HS code の場合、英文品名がそのまま使われ、
+      単価チェックは実施されません (上限・下限が `0` と `999999` のため)
+    """
+)
 
-        **日文品名**
-        　ダッシュボードのタイトルに表示される名称です。
+st.divider()
 
-        **単価妥当レンジ**
-        　平均単価がこのレンジを外れると、表3 の「備考」欄に
-        　「※単価要確認」と自動的に表示されます。市況急変・データ異常の早期発見にご利用ください。
+st.markdown("### 💡 単価レンジ設定の目安")
+st.markdown(
+    """
+    化学品ごとの単価レンジ設定例:
 
-        **未登録品目の扱い**
-        　ここに登録されていない HS code の場合、英文品名がそのまま使われ、
-        　単価チェックは実施されません（上限・下限が `0` と `999999` のため）。
-        """
-    )
+    - **ナフサ系 (基礎化学品)**: 400〜800 USD/TNE
+    - **触媒・添加剤 (TEDA, TOYOCAT 等)**: 2,500〜5,500 USD/TNE
+    - **特殊化学品 / 添加剤**: 5,000〜15,000 USD/TNE 程度
 
-with st.expander("単価レンジ設定の目安", expanded=False):
-    st.markdown(
-        """
-        化学品ごとの単価レンジ設定例：
-
-        - **ナフサ系（基礎化学品）** … 400 〜 800 USD/TNE
-        - **触媒・添加剤（TEDA、TOYOCAT 等）** … 2,500 〜 5,500 USD/TNE
-        - **特殊化学品 / 添加剤** … 5,000 〜 15,000 USD/TNE 程度
-
-        実際の市況データを参照しながら適宜調整してください。
-        一度設定すれば次回以降も適用されます。
-        """
-    )
-
-# ========== フッター ==========
-
-footer()
+    実際の市況データを参照しながら適宜調整してください。
+    一度設定すれば次回以降も適用されます。
+    """
+)
