@@ -1,53 +1,1538 @@
 {
-  "_comment": "国名対照表。原始資料出現的英文国名 → 日文国名。order 決定排序順位 (越小越上)。新規国家が出現した場合、自動で末尾に追加されます (auto_added: true)。",
-  "_last_updated": "2026-04-29",
-
   "countries": [
-    { "en": "Russian Federation",      "jp": "ロシア",         "order": 1 },
-    { "en": "Arab Emirates, United",   "jp": "UAE",           "order": 2 },
-    { "en": "Qatar",                   "jp": "カタール",        "order": 3 },
-    { "en": "Singapore",               "jp": "シンガポール",     "order": 4 },
-    { "en": "Kuwait",                  "jp": "クウェート",      "order": 5 },
-    { "en": "United States",           "jp": "米国",          "order": 6 },
-    { "en": "China",                   "jp": "中国",          "order": 7 },
-    { "en": "Iraq",                    "jp": "イラク",         "order": 8 },
-    { "en": "Netherlands",             "jp": "オランダ",        "order": 9 },
-    { "en": "Saudi Arabia",            "jp": "サウジアラビア",    "order": 10 },
-    { "en": "Malaysia",                "jp": "マレーシア",      "order": 11 },
-    { "en": "India",                   "jp": "インド",         "order": 12 },
-    { "en": "Algeria",                 "jp": "アルジェリア",     "order": 13 },
-    { "en": "Switzerland",             "jp": "スイス",         "order": 14 },
-    { "en": "Canada",                  "jp": "カナダ",         "order": 15 },
-    { "en": "Belgium",                 "jp": "ベルギー",        "order": 16 },
-
-    { "_comment_below": "以下は予備の対訳。原始資料に出現した時点で自動的に「使用中」に切り替わります。",
-      "en": "Japan",                   "jp": "日本",          "order": 100 },
-    { "en": "Korea, Republic of",      "jp": "韓国",          "order": 101 },
-    { "en": "Korea, Dem. People's Rep. of", "jp": "北朝鮮",   "order": 102 },
-    { "en": "Hong Kong",               "jp": "香港",          "order": 103 },
-    { "en": "Taiwan",                  "jp": "台湾",          "order": 104 },
-    { "en": "Thailand",                "jp": "タイ",           "order": 105 },
-    { "en": "Vietnam",                 "jp": "ベトナム",        "order": 106 },
-    { "en": "Indonesia",               "jp": "インドネシア",     "order": 107 },
-    { "en": "Philippines",             "jp": "フィリピン",      "order": 108 },
-    { "en": "Australia",               "jp": "オーストラリア",   "order": 109 },
-    { "en": "New Zealand",             "jp": "ニュージーランド", "order": 110 },
-    { "en": "Germany",                 "jp": "ドイツ",         "order": 111 },
-    { "en": "France",                  "jp": "フランス",        "order": 112 },
-    { "en": "United Kingdom",          "jp": "英国",          "order": 113 },
-    { "en": "Italy",                   "jp": "イタリア",        "order": 114 },
-    { "en": "Spain",                   "jp": "スペイン",        "order": 115 },
-    { "en": "Iran",                    "jp": "イラン",         "order": 116 },
-    { "en": "Oman",                    "jp": "オマーン",        "order": 117 },
-    { "en": "Bahrain",                 "jp": "バーレーン",      "order": 118 },
-    { "en": "Mexico",                  "jp": "メキシコ",        "order": 119 },
-    { "en": "Brazil",                  "jp": "ブラジル",        "order": 120 },
-    { "en": "Argentina",               "jp": "アルゼンチン",     "order": 121 },
-    { "en": "Chile",                   "jp": "チリ",           "order": 122 },
-    { "en": "South Africa",            "jp": "南アフリカ",      "order": 123 },
-    { "en": "Egypt",                   "jp": "エジプト",        "order": 124 },
-    { "en": "Nigeria",                 "jp": "ナイジェリア",     "order": 125 },
-    { "en": "Turkey",                  "jp": "トルコ",         "order": 126 },
-    { "en": "Israel",                  "jp": "イスラエル",      "order": 127 }
+    {
+      "en": "Aruba",
+      "jp": "アルバ",
+      "order": 1,
+      "iso2": "AW"
+    },
+    {
+      "en": "Afghanistan",
+      "jp": "アフガニスタン",
+      "order": 2,
+      "iso2": "AF"
+    },
+    {
+      "en": "Angola",
+      "jp": "アンゴラ",
+      "order": 3,
+      "iso2": "AO"
+    },
+    {
+      "en": "Anguilla",
+      "jp": "アンギラ",
+      "order": 4,
+      "iso2": "AI"
+    },
+    {
+      "en": "Åland Islands",
+      "jp": "オーランド諸島",
+      "order": 5,
+      "iso2": "AX"
+    },
+    {
+      "en": "Albania",
+      "jp": "アルバニア",
+      "order": 6,
+      "iso2": "AL"
+    },
+    {
+      "en": "Andorra",
+      "jp": "アンドラ",
+      "order": 7,
+      "iso2": "AD"
+    },
+    {
+      "en": "Arab Emirates, United",
+      "jp": "UAE",
+      "order": 8,
+      "iso2": "AE",
+      "aliases": [
+        "United Arab Emirates"
+      ]
+    },
+    {
+      "en": "Argentina",
+      "jp": "アルゼンチン",
+      "order": 9,
+      "iso2": "AR"
+    },
+    {
+      "en": "Armenia",
+      "jp": "アルメニア",
+      "order": 10,
+      "iso2": "AM"
+    },
+    {
+      "en": "American Samoa",
+      "jp": "米領サモア",
+      "order": 11,
+      "iso2": "AS"
+    },
+    {
+      "en": "Antarctica",
+      "jp": "南極",
+      "order": 12,
+      "iso2": "AQ"
+    },
+    {
+      "en": "French Southern Territories",
+      "jp": "仏領南方・南極地域",
+      "order": 13,
+      "iso2": "TF"
+    },
+    {
+      "en": "Antigua and Barbuda",
+      "jp": "アンティグア・バーブーダ",
+      "order": 14,
+      "iso2": "AG"
+    },
+    {
+      "en": "Australia",
+      "jp": "オーストラリア",
+      "order": 15,
+      "iso2": "AU"
+    },
+    {
+      "en": "Austria",
+      "jp": "オーストリア",
+      "order": 16,
+      "iso2": "AT"
+    },
+    {
+      "en": "Azerbaijan",
+      "jp": "アゼルバイジャン",
+      "order": 17,
+      "iso2": "AZ"
+    },
+    {
+      "en": "Burundi",
+      "jp": "ブルンジ",
+      "order": 18,
+      "iso2": "BI"
+    },
+    {
+      "en": "Belgium",
+      "jp": "ベルギー",
+      "order": 19,
+      "iso2": "BE"
+    },
+    {
+      "en": "Benin",
+      "jp": "ベナン",
+      "order": 20,
+      "iso2": "BJ"
+    },
+    {
+      "en": "Bonaire, Sint Eustatius and Saba",
+      "jp": "ボネール、シント・ユースタティウスおよびサバ",
+      "order": 21,
+      "iso2": "BQ"
+    },
+    {
+      "en": "Burkina Faso",
+      "jp": "ブルキナファソ",
+      "order": 22,
+      "iso2": "BF"
+    },
+    {
+      "en": "Bangladesh",
+      "jp": "バングラデシュ",
+      "order": 23,
+      "iso2": "BD"
+    },
+    {
+      "en": "Bulgaria",
+      "jp": "ブルガリア",
+      "order": 24,
+      "iso2": "BG"
+    },
+    {
+      "en": "Bahrain",
+      "jp": "バーレーン",
+      "order": 25,
+      "iso2": "BH"
+    },
+    {
+      "en": "Bahamas",
+      "jp": "バハマ",
+      "order": 26,
+      "iso2": "BS"
+    },
+    {
+      "en": "Bosnia and Herzegovina",
+      "jp": "ボスニア・ヘルツェゴビナ",
+      "order": 27,
+      "iso2": "BA"
+    },
+    {
+      "en": "Saint Barthélemy",
+      "jp": "サン・バルテルミー島",
+      "order": 28,
+      "iso2": "BL"
+    },
+    {
+      "en": "Belarus",
+      "jp": "ベラルーシ",
+      "order": 29,
+      "iso2": "BY"
+    },
+    {
+      "en": "Belize",
+      "jp": "ベリーズ",
+      "order": 30,
+      "iso2": "BZ"
+    },
+    {
+      "en": "Bermuda",
+      "jp": "バミューダ",
+      "order": 31,
+      "iso2": "BM"
+    },
+    {
+      "en": "Bolivia, Plurinational State of",
+      "jp": "ボリビア",
+      "order": 32,
+      "iso2": "BO",
+      "aliases": [
+        "Bolivia"
+      ]
+    },
+    {
+      "en": "Brazil",
+      "jp": "ブラジル",
+      "order": 33,
+      "iso2": "BR"
+    },
+    {
+      "en": "Barbados",
+      "jp": "バルバドス",
+      "order": 34,
+      "iso2": "BB"
+    },
+    {
+      "en": "Brunei Darussalam",
+      "jp": "ブルネイ",
+      "order": 35,
+      "iso2": "BN"
+    },
+    {
+      "en": "Bhutan",
+      "jp": "ブータン",
+      "order": 36,
+      "iso2": "BT"
+    },
+    {
+      "en": "Bouvet Island",
+      "jp": "ブーベ島",
+      "order": 37,
+      "iso2": "BV"
+    },
+    {
+      "en": "Botswana",
+      "jp": "ボツワナ",
+      "order": 38,
+      "iso2": "BW"
+    },
+    {
+      "en": "Central African Republic",
+      "jp": "中央アフリカ",
+      "order": 39,
+      "iso2": "CF"
+    },
+    {
+      "en": "Canada",
+      "jp": "カナダ",
+      "order": 40,
+      "iso2": "CA"
+    },
+    {
+      "en": "Cocos (Keeling) Islands",
+      "jp": "Cocos (Keeling) Islands",
+      "order": 41,
+      "iso2": "CC"
+    },
+    {
+      "en": "Switzerland",
+      "jp": "スイス",
+      "order": 42,
+      "iso2": "CH"
+    },
+    {
+      "en": "Chile",
+      "jp": "チリ",
+      "order": 43,
+      "iso2": "CL"
+    },
+    {
+      "en": "China",
+      "jp": "中国",
+      "order": 44,
+      "iso2": "CN"
+    },
+    {
+      "en": "Côte d'Ivoire",
+      "jp": "コートジボワール",
+      "order": 45,
+      "iso2": "CI"
+    },
+    {
+      "en": "Cameroon",
+      "jp": "カメルーン",
+      "order": 46,
+      "iso2": "CM"
+    },
+    {
+      "en": "Congo, The Democratic Republic of the",
+      "jp": "コンゴ民主共和国",
+      "order": 47,
+      "iso2": "CD"
+    },
+    {
+      "en": "Congo",
+      "jp": "コンゴ共和国",
+      "order": 48,
+      "iso2": "CG"
+    },
+    {
+      "en": "Cook Islands",
+      "jp": "クック諸島",
+      "order": 49,
+      "iso2": "CK"
+    },
+    {
+      "en": "Colombia",
+      "jp": "コロンビア",
+      "order": 50,
+      "iso2": "CO"
+    },
+    {
+      "en": "Comoros",
+      "jp": "コモロ",
+      "order": 51,
+      "iso2": "KM"
+    },
+    {
+      "en": "Cabo Verde",
+      "jp": "カーボベルデ",
+      "order": 52,
+      "iso2": "CV"
+    },
+    {
+      "en": "Costa Rica",
+      "jp": "コスタリカ",
+      "order": 53,
+      "iso2": "CR"
+    },
+    {
+      "en": "Cuba",
+      "jp": "キューバ",
+      "order": 54,
+      "iso2": "CU"
+    },
+    {
+      "en": "Curaçao",
+      "jp": "キュラソー",
+      "order": 55,
+      "iso2": "CW"
+    },
+    {
+      "en": "Christmas Island",
+      "jp": "Christmas Island",
+      "order": 56,
+      "iso2": "CX"
+    },
+    {
+      "en": "Cayman Islands",
+      "jp": "ケイマン諸島",
+      "order": 57,
+      "iso2": "KY"
+    },
+    {
+      "en": "Cyprus",
+      "jp": "キプロス",
+      "order": 58,
+      "iso2": "CY"
+    },
+    {
+      "en": "Czechia",
+      "jp": "チェコ",
+      "order": 59,
+      "iso2": "CZ"
+    },
+    {
+      "en": "Germany",
+      "jp": "ドイツ",
+      "order": 60,
+      "iso2": "DE"
+    },
+    {
+      "en": "Djibouti",
+      "jp": "ジブチ",
+      "order": 61,
+      "iso2": "DJ"
+    },
+    {
+      "en": "Dominica",
+      "jp": "ドミニカ国",
+      "order": 62,
+      "iso2": "DM"
+    },
+    {
+      "en": "Denmark",
+      "jp": "デンマーク",
+      "order": 63,
+      "iso2": "DK"
+    },
+    {
+      "en": "Dominican Republic",
+      "jp": "ドミニカ共和国",
+      "order": 64,
+      "iso2": "DO"
+    },
+    {
+      "en": "Algeria",
+      "jp": "アルジェリア",
+      "order": 65,
+      "iso2": "DZ"
+    },
+    {
+      "en": "Ecuador",
+      "jp": "エクアドル",
+      "order": 66,
+      "iso2": "EC"
+    },
+    {
+      "en": "Egypt",
+      "jp": "エジプト",
+      "order": 67,
+      "iso2": "EG"
+    },
+    {
+      "en": "Eritrea",
+      "jp": "エリトリア",
+      "order": 68,
+      "iso2": "ER"
+    },
+    {
+      "en": "Western Sahara",
+      "jp": "西サハラ",
+      "order": 69,
+      "iso2": "EH"
+    },
+    {
+      "en": "Spain",
+      "jp": "スペイン",
+      "order": 70,
+      "iso2": "ES"
+    },
+    {
+      "en": "Estonia",
+      "jp": "エストニア",
+      "order": 71,
+      "iso2": "EE"
+    },
+    {
+      "en": "Ethiopia",
+      "jp": "エチオピア",
+      "order": 72,
+      "iso2": "ET"
+    },
+    {
+      "en": "Finland",
+      "jp": "フィンランド",
+      "order": 73,
+      "iso2": "FI"
+    },
+    {
+      "en": "Fiji",
+      "jp": "フィジー",
+      "order": 74,
+      "iso2": "FJ"
+    },
+    {
+      "en": "Falkland Islands (Malvinas)",
+      "jp": "フォークランド諸島",
+      "order": 75,
+      "iso2": "FK"
+    },
+    {
+      "en": "France",
+      "jp": "フランス",
+      "order": 76,
+      "iso2": "FR"
+    },
+    {
+      "en": "Faroe Islands",
+      "jp": "フェロー諸島",
+      "order": 77,
+      "iso2": "FO"
+    },
+    {
+      "en": "Micronesia, Federated States of",
+      "jp": "ミクロネシア連邦",
+      "order": 78,
+      "iso2": "FM"
+    },
+    {
+      "en": "Gabon",
+      "jp": "ガボン",
+      "order": 79,
+      "iso2": "GA"
+    },
+    {
+      "en": "United Kingdom",
+      "jp": "イギリス",
+      "order": 80,
+      "iso2": "GB"
+    },
+    {
+      "en": "Georgia",
+      "jp": "ジョージア",
+      "order": 81,
+      "iso2": "GE"
+    },
+    {
+      "en": "Guernsey",
+      "jp": "ガーンジー",
+      "order": 82,
+      "iso2": "GG"
+    },
+    {
+      "en": "Ghana",
+      "jp": "ガーナ",
+      "order": 83,
+      "iso2": "GH"
+    },
+    {
+      "en": "Gibraltar",
+      "jp": "ジブラルタル",
+      "order": 84,
+      "iso2": "GI"
+    },
+    {
+      "en": "Guinea",
+      "jp": "ギニア",
+      "order": 85,
+      "iso2": "GN"
+    },
+    {
+      "en": "Guadeloupe",
+      "jp": "グアドループ",
+      "order": 86,
+      "iso2": "GP"
+    },
+    {
+      "en": "Gambia",
+      "jp": "ガンビア",
+      "order": 87,
+      "iso2": "GM"
+    },
+    {
+      "en": "Guinea-Bissau",
+      "jp": "ギニアビサウ",
+      "order": 88,
+      "iso2": "GW"
+    },
+    {
+      "en": "Equatorial Guinea",
+      "jp": "赤道ギニア",
+      "order": 89,
+      "iso2": "GQ"
+    },
+    {
+      "en": "Greece",
+      "jp": "ギリシャ",
+      "order": 90,
+      "iso2": "GR"
+    },
+    {
+      "en": "Grenada",
+      "jp": "グレナダ",
+      "order": 91,
+      "iso2": "GD"
+    },
+    {
+      "en": "Greenland",
+      "jp": "グリーンランド",
+      "order": 92,
+      "iso2": "GL"
+    },
+    {
+      "en": "Guatemala",
+      "jp": "グアテマラ",
+      "order": 93,
+      "iso2": "GT"
+    },
+    {
+      "en": "French Guiana",
+      "jp": "仏領ギアナ",
+      "order": 94,
+      "iso2": "GF"
+    },
+    {
+      "en": "Guam",
+      "jp": "グアム",
+      "order": 95,
+      "iso2": "GU"
+    },
+    {
+      "en": "Guyana",
+      "jp": "ガイアナ",
+      "order": 96,
+      "iso2": "GY"
+    },
+    {
+      "en": "Hong Kong",
+      "jp": "香港",
+      "order": 97,
+      "iso2": "HK"
+    },
+    {
+      "en": "Heard Island and McDonald Islands",
+      "jp": "ハード島・マクドナルド諸島",
+      "order": 98,
+      "iso2": "HM"
+    },
+    {
+      "en": "Honduras",
+      "jp": "ホンジュラス",
+      "order": 99,
+      "iso2": "HN"
+    },
+    {
+      "en": "Croatia",
+      "jp": "クロアチア",
+      "order": 100,
+      "iso2": "HR"
+    },
+    {
+      "en": "Haiti",
+      "jp": "ハイチ",
+      "order": 101,
+      "iso2": "HT"
+    },
+    {
+      "en": "Hungary",
+      "jp": "ハンガリー",
+      "order": 102,
+      "iso2": "HU"
+    },
+    {
+      "en": "Indonesia",
+      "jp": "インドネシア",
+      "order": 103,
+      "iso2": "ID"
+    },
+    {
+      "en": "Isle of Man",
+      "jp": "マン島",
+      "order": 104,
+      "iso2": "IM"
+    },
+    {
+      "en": "India",
+      "jp": "インド",
+      "order": 105,
+      "iso2": "IN"
+    },
+    {
+      "en": "British Indian Ocean Territory",
+      "jp": "英領インド洋地域",
+      "order": 106,
+      "iso2": "IO"
+    },
+    {
+      "en": "Ireland",
+      "jp": "アイルランド",
+      "order": 107,
+      "iso2": "IE"
+    },
+    {
+      "en": "Iran, Islamic Republic of",
+      "jp": "イラン",
+      "order": 108,
+      "iso2": "IR",
+      "aliases": [
+        "Iran"
+      ]
+    },
+    {
+      "en": "Iraq",
+      "jp": "イラク",
+      "order": 109,
+      "iso2": "IQ"
+    },
+    {
+      "en": "Iceland",
+      "jp": "アイスランド",
+      "order": 110,
+      "iso2": "IS"
+    },
+    {
+      "en": "Israel",
+      "jp": "イスラエル",
+      "order": 111,
+      "iso2": "IL"
+    },
+    {
+      "en": "Italy",
+      "jp": "イタリア",
+      "order": 112,
+      "iso2": "IT"
+    },
+    {
+      "en": "Jamaica",
+      "jp": "ジャマイカ",
+      "order": 113,
+      "iso2": "JM"
+    },
+    {
+      "en": "Jersey",
+      "jp": "ジャージー",
+      "order": 114,
+      "iso2": "JE"
+    },
+    {
+      "en": "Jordan",
+      "jp": "ヨルダン",
+      "order": 115,
+      "iso2": "JO"
+    },
+    {
+      "en": "Japan",
+      "jp": "日本",
+      "order": 116,
+      "iso2": "JP"
+    },
+    {
+      "en": "Kazakhstan",
+      "jp": "カザフスタン",
+      "order": 117,
+      "iso2": "KZ"
+    },
+    {
+      "en": "Kenya",
+      "jp": "ケニア",
+      "order": 118,
+      "iso2": "KE"
+    },
+    {
+      "en": "Kyrgyzstan",
+      "jp": "キルギス",
+      "order": 119,
+      "iso2": "KG"
+    },
+    {
+      "en": "Cambodia",
+      "jp": "カンボジア",
+      "order": 120,
+      "iso2": "KH"
+    },
+    {
+      "en": "Kiribati",
+      "jp": "キリバス",
+      "order": 121,
+      "iso2": "KI"
+    },
+    {
+      "en": "Saint Kitts and Nevis",
+      "jp": "セントクリストファー・ネイビス",
+      "order": 122,
+      "iso2": "KN"
+    },
+    {
+      "en": "Korea, Republic of",
+      "jp": "韓国",
+      "order": 123,
+      "iso2": "KR",
+      "aliases": [
+        "South Korea"
+      ]
+    },
+    {
+      "en": "Kuwait",
+      "jp": "クウェート",
+      "order": 124,
+      "iso2": "KW"
+    },
+    {
+      "en": "Lao People's Democratic Republic",
+      "jp": "ラオス",
+      "order": 125,
+      "iso2": "LA",
+      "aliases": [
+        "Laos"
+      ]
+    },
+    {
+      "en": "Lebanon",
+      "jp": "レバノン",
+      "order": 126,
+      "iso2": "LB"
+    },
+    {
+      "en": "Liberia",
+      "jp": "リベリア",
+      "order": 127,
+      "iso2": "LR"
+    },
+    {
+      "en": "Libya",
+      "jp": "リビア",
+      "order": 128,
+      "iso2": "LY"
+    },
+    {
+      "en": "Saint Lucia",
+      "jp": "セントルシア",
+      "order": 129,
+      "iso2": "LC"
+    },
+    {
+      "en": "Liechtenstein",
+      "jp": "リヒテンシュタイン",
+      "order": 130,
+      "iso2": "LI"
+    },
+    {
+      "en": "Sri Lanka",
+      "jp": "スリランカ",
+      "order": 131,
+      "iso2": "LK"
+    },
+    {
+      "en": "Lesotho",
+      "jp": "レソト",
+      "order": 132,
+      "iso2": "LS"
+    },
+    {
+      "en": "Lithuania",
+      "jp": "リトアニア",
+      "order": 133,
+      "iso2": "LT"
+    },
+    {
+      "en": "Luxembourg",
+      "jp": "ルクセンブルク",
+      "order": 134,
+      "iso2": "LU"
+    },
+    {
+      "en": "Latvia",
+      "jp": "ラトビア",
+      "order": 135,
+      "iso2": "LV"
+    },
+    {
+      "en": "Macao",
+      "jp": "マカオ",
+      "order": 136,
+      "iso2": "MO"
+    },
+    {
+      "en": "Saint Martin (French part)",
+      "jp": "サン・マルタン (フランス領)",
+      "order": 137,
+      "iso2": "MF"
+    },
+    {
+      "en": "Morocco",
+      "jp": "モロッコ",
+      "order": 138,
+      "iso2": "MA"
+    },
+    {
+      "en": "Monaco",
+      "jp": "モナコ",
+      "order": 139,
+      "iso2": "MC"
+    },
+    {
+      "en": "Moldova, Republic of",
+      "jp": "モルドバ",
+      "order": 140,
+      "iso2": "MD",
+      "aliases": [
+        "Moldova"
+      ]
+    },
+    {
+      "en": "Madagascar",
+      "jp": "マダガスカル",
+      "order": 141,
+      "iso2": "MG"
+    },
+    {
+      "en": "Maldives",
+      "jp": "モルディブ",
+      "order": 142,
+      "iso2": "MV"
+    },
+    {
+      "en": "Mexico",
+      "jp": "メキシコ",
+      "order": 143,
+      "iso2": "MX"
+    },
+    {
+      "en": "Marshall Islands",
+      "jp": "マーシャル諸島",
+      "order": 144,
+      "iso2": "MH"
+    },
+    {
+      "en": "North Macedonia",
+      "jp": "北マケドニア",
+      "order": 145,
+      "iso2": "MK"
+    },
+    {
+      "en": "Mali",
+      "jp": "マリ",
+      "order": 146,
+      "iso2": "ML"
+    },
+    {
+      "en": "Malta",
+      "jp": "マルタ",
+      "order": 147,
+      "iso2": "MT"
+    },
+    {
+      "en": "Myanmar",
+      "jp": "ミャンマー",
+      "order": 148,
+      "iso2": "MM"
+    },
+    {
+      "en": "Montenegro",
+      "jp": "モンテネグロ",
+      "order": 149,
+      "iso2": "ME"
+    },
+    {
+      "en": "Mongolia",
+      "jp": "モンゴル",
+      "order": 150,
+      "iso2": "MN"
+    },
+    {
+      "en": "Northern Mariana Islands",
+      "jp": "北マリアナ諸島",
+      "order": 151,
+      "iso2": "MP"
+    },
+    {
+      "en": "Mozambique",
+      "jp": "モザンビーク",
+      "order": 152,
+      "iso2": "MZ"
+    },
+    {
+      "en": "Mauritania",
+      "jp": "モーリタニア",
+      "order": 153,
+      "iso2": "MR"
+    },
+    {
+      "en": "Montserrat",
+      "jp": "モントセラト",
+      "order": 154,
+      "iso2": "MS"
+    },
+    {
+      "en": "Martinique",
+      "jp": "マルティニーク",
+      "order": 155,
+      "iso2": "MQ"
+    },
+    {
+      "en": "Mauritius",
+      "jp": "モーリシャス",
+      "order": 156,
+      "iso2": "MU"
+    },
+    {
+      "en": "Malawi",
+      "jp": "マラウイ",
+      "order": 157,
+      "iso2": "MW"
+    },
+    {
+      "en": "Malaysia",
+      "jp": "マレーシア",
+      "order": 158,
+      "iso2": "MY"
+    },
+    {
+      "en": "Mayotte",
+      "jp": "マヨット",
+      "order": 159,
+      "iso2": "YT"
+    },
+    {
+      "en": "Namibia",
+      "jp": "ナミビア",
+      "order": 160,
+      "iso2": "NA"
+    },
+    {
+      "en": "New Caledonia",
+      "jp": "ニューカレドニア",
+      "order": 161,
+      "iso2": "NC"
+    },
+    {
+      "en": "Niger",
+      "jp": "ニジェール",
+      "order": 162,
+      "iso2": "NE"
+    },
+    {
+      "en": "Norfolk Island",
+      "jp": "ノーフォーク島",
+      "order": 163,
+      "iso2": "NF"
+    },
+    {
+      "en": "Nigeria",
+      "jp": "ナイジェリア",
+      "order": 164,
+      "iso2": "NG"
+    },
+    {
+      "en": "Nicaragua",
+      "jp": "ニカラグア",
+      "order": 165,
+      "iso2": "NI"
+    },
+    {
+      "en": "Niue",
+      "jp": "ニウエ",
+      "order": 166,
+      "iso2": "NU"
+    },
+    {
+      "en": "Netherlands",
+      "jp": "オランダ",
+      "order": 167,
+      "iso2": "NL"
+    },
+    {
+      "en": "Norway",
+      "jp": "ノルウェー",
+      "order": 168,
+      "iso2": "NO"
+    },
+    {
+      "en": "Nepal",
+      "jp": "ネパール",
+      "order": 169,
+      "iso2": "NP"
+    },
+    {
+      "en": "Nauru",
+      "jp": "ナウル",
+      "order": 170,
+      "iso2": "NR"
+    },
+    {
+      "en": "New Zealand",
+      "jp": "ニュージーランド",
+      "order": 171,
+      "iso2": "NZ"
+    },
+    {
+      "en": "Oman",
+      "jp": "オマーン",
+      "order": 172,
+      "iso2": "OM"
+    },
+    {
+      "en": "Pakistan",
+      "jp": "パキスタン",
+      "order": 173,
+      "iso2": "PK"
+    },
+    {
+      "en": "Panama",
+      "jp": "パナマ",
+      "order": 174,
+      "iso2": "PA"
+    },
+    {
+      "en": "Pitcairn",
+      "jp": "ピトケアン諸島",
+      "order": 175,
+      "iso2": "PN"
+    },
+    {
+      "en": "Peru",
+      "jp": "ペルー",
+      "order": 176,
+      "iso2": "PE"
+    },
+    {
+      "en": "Philippines",
+      "jp": "フィリピン",
+      "order": 177,
+      "iso2": "PH"
+    },
+    {
+      "en": "Palau",
+      "jp": "パラオ",
+      "order": 178,
+      "iso2": "PW"
+    },
+    {
+      "en": "Papua New Guinea",
+      "jp": "パプアニューギニア",
+      "order": 179,
+      "iso2": "PG"
+    },
+    {
+      "en": "Poland",
+      "jp": "ポーランド",
+      "order": 180,
+      "iso2": "PL"
+    },
+    {
+      "en": "Puerto Rico",
+      "jp": "プエルトリコ",
+      "order": 181,
+      "iso2": "PR"
+    },
+    {
+      "en": "Korea, Democratic People's Republic of",
+      "jp": "北朝鮮",
+      "order": 182,
+      "iso2": "KP",
+      "aliases": [
+        "North Korea"
+      ]
+    },
+    {
+      "en": "Portugal",
+      "jp": "ポルトガル",
+      "order": 183,
+      "iso2": "PT"
+    },
+    {
+      "en": "Paraguay",
+      "jp": "パラグアイ",
+      "order": 184,
+      "iso2": "PY"
+    },
+    {
+      "en": "Palestine, State of",
+      "jp": "パレスチナ",
+      "order": 185,
+      "iso2": "PS"
+    },
+    {
+      "en": "French Polynesia",
+      "jp": "仏領ポリネシア",
+      "order": 186,
+      "iso2": "PF"
+    },
+    {
+      "en": "Qatar",
+      "jp": "カタール",
+      "order": 187,
+      "iso2": "QA"
+    },
+    {
+      "en": "Réunion",
+      "jp": "レユニオン",
+      "order": 188,
+      "iso2": "RE"
+    },
+    {
+      "en": "Romania",
+      "jp": "ルーマニア",
+      "order": 189,
+      "iso2": "RO"
+    },
+    {
+      "en": "Russian Federation",
+      "jp": "ロシア",
+      "order": 190,
+      "iso2": "RU"
+    },
+    {
+      "en": "Rwanda",
+      "jp": "ルワンダ",
+      "order": 191,
+      "iso2": "RW"
+    },
+    {
+      "en": "Saudi Arabia",
+      "jp": "サウジアラビア",
+      "order": 192,
+      "iso2": "SA"
+    },
+    {
+      "en": "Sudan",
+      "jp": "スーダン",
+      "order": 193,
+      "iso2": "SD"
+    },
+    {
+      "en": "Senegal",
+      "jp": "セネガル",
+      "order": 194,
+      "iso2": "SN"
+    },
+    {
+      "en": "Singapore",
+      "jp": "シンガポール",
+      "order": 195,
+      "iso2": "SG"
+    },
+    {
+      "en": "South Georgia and the South Sandwich Islands",
+      "jp": "南ジョージア・南サンドイッチ諸島",
+      "order": 196,
+      "iso2": "GS"
+    },
+    {
+      "en": "Saint Helena, Ascension and Tristan da Cunha",
+      "jp": "セントヘレナ",
+      "order": 197,
+      "iso2": "SH"
+    },
+    {
+      "en": "Svalbard and Jan Mayen",
+      "jp": "スバールバル諸島",
+      "order": 198,
+      "iso2": "SJ"
+    },
+    {
+      "en": "Solomon Islands",
+      "jp": "ソロモン諸島",
+      "order": 199,
+      "iso2": "SB"
+    },
+    {
+      "en": "Sierra Leone",
+      "jp": "シエラレオネ",
+      "order": 200,
+      "iso2": "SL"
+    },
+    {
+      "en": "El Salvador",
+      "jp": "エルサルバドル",
+      "order": 201,
+      "iso2": "SV"
+    },
+    {
+      "en": "San Marino",
+      "jp": "サンマリノ",
+      "order": 202,
+      "iso2": "SM"
+    },
+    {
+      "en": "Somalia",
+      "jp": "ソマリア",
+      "order": 203,
+      "iso2": "SO"
+    },
+    {
+      "en": "Saint Pierre and Miquelon",
+      "jp": "サンピエール島・ミクロン島",
+      "order": 204,
+      "iso2": "PM"
+    },
+    {
+      "en": "Serbia",
+      "jp": "セルビア",
+      "order": 205,
+      "iso2": "RS"
+    },
+    {
+      "en": "South Sudan",
+      "jp": "南スーダン",
+      "order": 206,
+      "iso2": "SS"
+    },
+    {
+      "en": "Sao Tome and Principe",
+      "jp": "サントメ・プリンシペ",
+      "order": 207,
+      "iso2": "ST"
+    },
+    {
+      "en": "Suriname",
+      "jp": "スリナム",
+      "order": 208,
+      "iso2": "SR"
+    },
+    {
+      "en": "Slovakia",
+      "jp": "スロバキア",
+      "order": 209,
+      "iso2": "SK"
+    },
+    {
+      "en": "Slovenia",
+      "jp": "スロベニア",
+      "order": 210,
+      "iso2": "SI"
+    },
+    {
+      "en": "Sweden",
+      "jp": "スウェーデン",
+      "order": 211,
+      "iso2": "SE"
+    },
+    {
+      "en": "Eswatini",
+      "jp": "エスワティニ",
+      "order": 212,
+      "iso2": "SZ"
+    },
+    {
+      "en": "Sint Maarten (Dutch part)",
+      "jp": "シント・マールテン",
+      "order": 213,
+      "iso2": "SX"
+    },
+    {
+      "en": "Seychelles",
+      "jp": "セーシェル",
+      "order": 214,
+      "iso2": "SC"
+    },
+    {
+      "en": "Syrian Arab Republic",
+      "jp": "シリア",
+      "order": 215,
+      "iso2": "SY",
+      "aliases": [
+        "Syria"
+      ]
+    },
+    {
+      "en": "Turks and Caicos Islands",
+      "jp": "タークス・カイコス諸島",
+      "order": 216,
+      "iso2": "TC"
+    },
+    {
+      "en": "Chad",
+      "jp": "チャド",
+      "order": 217,
+      "iso2": "TD"
+    },
+    {
+      "en": "Togo",
+      "jp": "トーゴ",
+      "order": 218,
+      "iso2": "TG"
+    },
+    {
+      "en": "Thailand",
+      "jp": "タイ",
+      "order": 219,
+      "iso2": "TH"
+    },
+    {
+      "en": "Tajikistan",
+      "jp": "タジキスタン",
+      "order": 220,
+      "iso2": "TJ"
+    },
+    {
+      "en": "Tokelau",
+      "jp": "トケラウ",
+      "order": 221,
+      "iso2": "TK"
+    },
+    {
+      "en": "Turkmenistan",
+      "jp": "トルクメニスタン",
+      "order": 222,
+      "iso2": "TM"
+    },
+    {
+      "en": "Timor-Leste",
+      "jp": "東ティモール",
+      "order": 223,
+      "iso2": "TL"
+    },
+    {
+      "en": "Tonga",
+      "jp": "トンガ",
+      "order": 224,
+      "iso2": "TO"
+    },
+    {
+      "en": "Trinidad and Tobago",
+      "jp": "トリニダード・トバゴ",
+      "order": 225,
+      "iso2": "TT"
+    },
+    {
+      "en": "Tunisia",
+      "jp": "チュニジア",
+      "order": 226,
+      "iso2": "TN"
+    },
+    {
+      "en": "Türkiye",
+      "jp": "トルコ",
+      "order": 227,
+      "iso2": "TR",
+      "aliases": [
+        "Turkey"
+      ]
+    },
+    {
+      "en": "Tuvalu",
+      "jp": "ツバル",
+      "order": 228,
+      "iso2": "TV"
+    },
+    {
+      "en": "Taiwan, ROC",
+      "jp": "台湾",
+      "order": 229,
+      "iso2": "TW",
+      "aliases": [
+        "Taiwan",
+        "Taiwan, Province of China"
+      ]
+    },
+    {
+      "en": "Tanzania, United Republic of",
+      "jp": "タンザニア",
+      "order": 230,
+      "iso2": "TZ",
+      "aliases": [
+        "Tanzania"
+      ]
+    },
+    {
+      "en": "Uganda",
+      "jp": "ウガンダ",
+      "order": 231,
+      "iso2": "UG"
+    },
+    {
+      "en": "Ukraine",
+      "jp": "ウクライナ",
+      "order": 232,
+      "iso2": "UA"
+    },
+    {
+      "en": "United States Minor Outlying Islands",
+      "jp": "合衆国領有小離島",
+      "order": 233,
+      "iso2": "UM"
+    },
+    {
+      "en": "Uruguay",
+      "jp": "ウルグアイ",
+      "order": 234,
+      "iso2": "UY"
+    },
+    {
+      "en": "United States",
+      "jp": "米国",
+      "order": 235,
+      "iso2": "US"
+    },
+    {
+      "en": "Uzbekistan",
+      "jp": "ウズベキスタン",
+      "order": 236,
+      "iso2": "UZ"
+    },
+    {
+      "en": "Holy See (Vatican City State)",
+      "jp": "バチカン",
+      "order": 237,
+      "iso2": "VA"
+    },
+    {
+      "en": "Saint Vincent and the Grenadines",
+      "jp": "セントビンセント・グレナディーン",
+      "order": 238,
+      "iso2": "VC"
+    },
+    {
+      "en": "Venezuela, Bolivarian Republic of",
+      "jp": "ベネズエラ",
+      "order": 239,
+      "iso2": "VE",
+      "aliases": [
+        "Venezuela"
+      ]
+    },
+    {
+      "en": "Virgin Islands, British",
+      "jp": "英領ヴァージン諸島",
+      "order": 240,
+      "iso2": "VG"
+    },
+    {
+      "en": "Virgin Islands, U.S.",
+      "jp": "米領ヴァージン諸島",
+      "order": 241,
+      "iso2": "VI"
+    },
+    {
+      "en": "Viet Nam",
+      "jp": "ベトナム",
+      "order": 242,
+      "iso2": "VN",
+      "aliases": [
+        "Vietnam"
+      ]
+    },
+    {
+      "en": "Vanuatu",
+      "jp": "バヌアツ",
+      "order": 243,
+      "iso2": "VU"
+    },
+    {
+      "en": "Wallis and Futuna",
+      "jp": "ウォリス・フツナ",
+      "order": 244,
+      "iso2": "WF"
+    },
+    {
+      "en": "Samoa",
+      "jp": "サモア",
+      "order": 245,
+      "iso2": "WS"
+    },
+    {
+      "en": "Yemen",
+      "jp": "イエメン",
+      "order": 246,
+      "iso2": "YE"
+    },
+    {
+      "en": "South Africa",
+      "jp": "南アフリカ",
+      "order": 247,
+      "iso2": "ZA"
+    },
+    {
+      "en": "Zambia",
+      "jp": "ザンビア",
+      "order": 248,
+      "iso2": "ZM"
+    },
+    {
+      "en": "Zimbabwe",
+      "jp": "ジンバブエ",
+      "order": 249,
+      "iso2": "ZW"
+    }
   ]
 }
