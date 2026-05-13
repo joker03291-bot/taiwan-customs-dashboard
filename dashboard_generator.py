@@ -59,16 +59,26 @@ RIGHT = Alignment(horizontal="right", vertical="center")
 # ============ 設定ファイル読み込み ============
 
 def load_country_mapping() -> dict:
-    """国名対照を読み込み。{en: {jp, order}} 形式で返す。"""
+    """
+    国名対照を読み込み。{en: {jp, order}} 形式で返す。
+    alias (別名) も同じエントリへのキーとして登録される。
+    例: 'Vietnam' (alias) と 'Viet Nam' (canonical) は両方とも 'ベトナム' を返す。
+    """
     with open(COUNTRY_MAPPING_FILE, encoding="utf-8") as f:
         data = json.load(f)
     mapping = {}
     for entry in data["countries"]:
         if "en" in entry and "jp" in entry:
-            mapping[entry["en"]] = {
+            info = {
                 "jp": entry["jp"],
                 "order": entry.get("order", 9999),
             }
+            # canonical 名で登録
+            mapping[entry["en"]] = info
+            # alias も同じ info を指すように登録
+            for alias in entry.get("aliases", []):
+                if alias not in mapping:  # canonical 名と衝突しない場合のみ
+                    mapping[alias] = info
     return mapping
 
 
@@ -352,7 +362,9 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
 
     total_col = 3 + n_months
     share_col = total_col + 1
-    sortkey_col = share_col + 1
+    # ソート鍵欄: 視覚的に邪魔にならないよう、ダッシュボード本体から離れた位置 (列 30) に配置
+    # 隠し列にすると Excel が分割線を表示するため、敢えて遠方に置いて見えにくくする
+    sortkey_col = 30
 
     for col, txt in [(total_col, "合計"), (share_col, "構成比")]:
         c = ws.cell(row=t1_header, column=col, value=txt)
@@ -480,7 +492,8 @@ def _build_dashboard_sheet(wb, used_countries, mapping, months,
                            align=RIGHT, num_fmt="0.0%")
 
     sortkey_col_letter = get_column_letter(sortkey_col)
-    ws.column_dimensions[sortkey_col_letter].hidden = True
+    # ソート鍵列はダッシュボード本体から離れているため、隠す必要なし
+    # (隠すと Excel が分割線を表示してしまうため)
 
     # --- 表 3: ランキング ---
     t3_start = t2_total_row + 3
@@ -789,15 +802,4 @@ def generate_dashboard(input_path: str, output_path: str,
         "trade_type": trade_types[0] if len(trade_types) == 1 else "Both",
         "per_trade_summaries": per_trade_summaries,
         "commodity_code": commodity_info["primary_code"],
-        "commodity_jp": commodity_settings.get("jp_name") or commodity_info["primary_desc"],
-        "period": f"{months_all[0]} 〜 {months_all[-1]}",
-        "n_months": len(months_all),
-        "n_countries": len(used_countries_all),
-        "n_records": len(df_combined),
-        "provisional_months": sorted(provisional_months),
-        "new_countries": new_countries,
-        "is_multi_commodity": commodity_info["is_multi"],
-        "granularity": granularity,
-        "removed_dummy_rows": removed_dummy_rows,
-        "summary": summary,
-    }
+        "commodity_jp": commodity_settings.get("jp_name") or commodity_info["prim
